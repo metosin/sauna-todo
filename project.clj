@@ -12,4 +12,13 @@
   :test-paths ["test/clj" "test/cljc"]
   :target-path "target/%s"
   :repl-options {:init-ns user}
-  :profiles {:uberjar {:aot :all}})
+  :profiles {:dev {:resource-paths ["target/dev/resources"]
+                   :sass {:target-path "target/dev/resources/css"}}
+             :uberjar {:aot :all}}
+  :plugins [[lein-pdo "0.1.1"]
+            [deraen/lein-sass4clj "0.3.0"]]
+  :sass {:source-paths ["src/sass"]
+         :source-map true
+         :output-style :compressed}
+  :aliases {"develop" ["do" "clean"
+                      ["pdo" ["sass4clj" "auto"]]]})
