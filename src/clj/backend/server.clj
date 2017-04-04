@@ -1,7 +1,14 @@
 (ns backend.server
-  (:require [integrant.core :as ig]
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str]
+            [common.localization :refer [tr]]
+            [hiccup.core :as hiccup]
+            [hiccup.page :as page]
+            [integrant.core :as ig]
             [immutant.web :as immutant]
-            [ring.util.response :as resp]))
+            [ring.util.response :as response]
+            [ring.middleware.content-type :as content-type])
+  (:import (org.apache.commons.codec.digest DigestUtils)))
 
 (defmethod ig/init-key :adapter/immutant [_ {:keys [handler] :as opts}]
   (immutant/run handler (-> opts (dissoc :handler))))
@@ -9,5 +16,41 @@
 (defmethod ig/halt-key! :adapter/immutant [_ server]
   (immutant/stop server))
 
-(defmethod ig/init-key :handler/greet [_ {:keys [name]}]
-  (fn [_] (resp/response (str "Hello " name))))
+;;
+;; Index page
+;;
+
+(defn index
+  []
+  (hiccup/html
+   (page/html5
+    [:head
+     [:title (tr :page-title)]
+     [:meta {:charset "utf-8"}]
+     [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge"}]
+     [:meta {:name "viewport" :content "width=device-width, initial-scale=1, shrink-to-fit=no"}]
+     (page/include-css "/css/style.css")]
+    [:body
+     [:div#app
+      [:div.loading
+       [:h1 (tr :loading)]]]
+     (page/include-js "/js/main.js")])))
+
+(defn create-index-handler
+  []
+  (fn [req]
+    (if (= (:request-method req) :get)
+      (-> (index)
+          response/response
+          (response/content-type "text/html; charset=utf-8")))))
+
+(defn create-static-handler
+  []
+  (-> (fn [req]
+        (if (= (:request-method req) :get)
+          (response/resource-response (:uri req))))
+      (content-type/wrap-content-type)))
+
+(defmethod ig/init-key :handler/ring [_ _]
+  (some-fn (create-static-handler)
+           (create-index-handler)))

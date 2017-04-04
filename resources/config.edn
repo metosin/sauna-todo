@@ -1,5 +1,5 @@
 {:adapter/immutant {:host "localhost"
                     :port 3000
                     :path "/"
-                    :handler #ref :handler/greet}
- :handler/greet {:name "Matti"}}
+                    :handler #ref :handler/ring}
+ :handler/ring {}}
