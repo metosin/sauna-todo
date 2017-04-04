@@ -1,36 +1,18 @@
-# sauna-todo
+# Sauna-todo
 
-FIXME: description
+Simple full-stack Clojure TODO app example for TiTe and Luuppi -sauna.
 
-## Installation
+## Development
 
-Download from http://example.com/FIXME.
+TODO
 
-## Usage
+## Deployment
 
-FIXME: explanation
-
-    $ java -jar sauna-todo-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+TODO
 
 ## License
 
-Copyright © 2017 FIXME
+Copyright © 2017 Metosin
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
