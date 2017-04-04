@@ -2,6 +2,8 @@
   (:gen-class))
 
 (defn -main
-  "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (require 'backend.server)
+  (let [config ((resolve 'integrant.core/read-string)
+                (slurp "resources/config.edn"))]
+    ((resolve 'integrant.core/init) config)))
