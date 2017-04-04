@@ -5,6 +5,10 @@
 
 (defonce state (reagent/atom nil))
 
+(defn update-todos!
+  [todos]
+  (swap! state assoc :todos todos))
+
 (defn todo-item-view
   [todo]
   [:div.todo-list__item (:text todo)])
@@ -27,7 +31,8 @@
                    (swap! state assoc :new-todo new-todo)))
     :on-key-press (fn [e]
                     (if (= (.-charCode e) 13)
-                      (js/console.log "Not Implemented Yet!")))}])
+                      (eines/send! {:message-type :new-todo
+                                    :body (:new-todo @state)})))}])
 
 (defn main-view
   []
@@ -43,11 +48,14 @@
   (js/console.log "Connected to backend.")
   (eines/send! {:message-type :get-todos}
                (fn [response]
-                 (swap! state assoc :todos (:body response)))))
+                 (update-todos! (:body response)))))
 
 (defn on-message
   [message]
-  (js/console.log "Got message from backend: " message))
+  (if (= (:message-type message) :todos)
+    (update-todos! (:body message))
+    (js/console.warn "Got unrecognized message from backend: "
+                     (pr-str message))))
 
 (defn on-close
   []

@@ -1,10 +1,21 @@
-(ns backend.todo)
+(ns backend.todo
+  (:require [backend.broadcast :as broadcast]))
 
-(def todos (atom [{:id 1
-                   :text "Eat pizza!"}
-                  {:id 2
-                   :text "Go to sauna!"}]))
+(defonce todos (atom [{:id 1
+                       :text "Eat pizza!"}
+                      {:id 2
+                       :text "Go to sauna!"}]))
 
 (defn get-todos
   [_]
-  {:body @todos})
+  {:message-type :todos
+   :body @todos})
+
+(defn add-todo!
+  [message]
+  (let [next-id (inc (apply max (map :id @todos)))
+        {:keys [send! send-fn]} message]
+    (swap! todos conj {:id next-id
+                       :text (:body message)})
+    (broadcast/broadcast! {:message-type :todos
+                           :body @todos})))
