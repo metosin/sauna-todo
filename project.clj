@@ -43,8 +43,8 @@
                                    :output-dir "target/prod/resources/js/out"}}]}
   :auto-clean false
   :figwheel {:css-dirs ["target/dev/resources/css"]}
-  :aliases {"develop" ["do" "clean"
-                       ["pdo" ["sass4clj" "auto"] ["figwheel"]]]
+  :aliases {"dev" ["do" "clean"
+                   ["pdo" ["sass4clj" "auto"] ["figwheel"]]]
             "prod" ["with-profile" "prod" "do"
                     "clean"
                     ["sass4clj" "once"]
