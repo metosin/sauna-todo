@@ -2,7 +2,7 @@
   (:require [backend.broadcast :as broadcast]))
 
 (defonce todos (atom [{:id 1
-                       :text "Eat pizza!"}
+                       :text "Eat and drink"}
                       {:id 2
                        :text "Go to sauna!"}]))
 
