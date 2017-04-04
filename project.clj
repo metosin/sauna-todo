@@ -9,7 +9,8 @@
                  [integrant/repl "0.2.0"]
                  [org.immutant/web "2.1.6"]
                  [hiccup "1.0.5"]
-                 [reagent "0.6.1"]]
+                 [reagent "0.6.1"]
+                 [metosin/eines "0.0.7"]]
   :main ^:skip-aot backend.main
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "test/cljc"]

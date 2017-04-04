@@ -7,7 +7,11 @@
             [integrant.core :as ig]
             [immutant.web :as immutant]
             [ring.util.response :as response]
-            [ring.middleware.content-type :as content-type])
+            [ring.middleware.content-type :as content-type]
+            [eines.core :as eines]
+            [eines.server.immutant :as eines-immutant]
+            [eines.middleware.rsvp :as rsvp]
+            [eines.middleware.session :as session])
   (:import (org.apache.commons.codec.digest DigestUtils)))
 
 (defmethod ig/init-key :adapter/immutant [_ {:keys [handler] :as opts}]
@@ -52,5 +56,9 @@
       (content-type/wrap-content-type)))
 
 (defmethod ig/init-key :handler/ring [_ _]
-  (some-fn (create-static-handler)
+  (some-fn (-> (eines/handler-context (fn [_]
+                                        {:body "Hello from backend!"})
+                                      {:middlewares [(rsvp/rsvp-middleware)]})
+               (eines-immutant/create-handler))
+           (create-static-handler)
            (create-index-handler)))
