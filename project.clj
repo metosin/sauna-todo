@@ -18,10 +18,13 @@
   :repl-options {:init-ns user}
   :profiles {:dev {:resource-paths ["target/dev/resources"]
                    :sass {:target-path "target/dev/resources/css"}}
-             :uberjar {:aot :all}}
+             :prod {:aot [backend.main]
+                    :sass {:target-path "target/prod/resources/css"}
+                    :resource-paths ["target/prod/resources"]}}
   :plugins [[lein-pdo "0.1.1"]
             [deraen/lein-sass4clj "0.3.0"]
-            [lein-figwheel "0.5.9"]]
+            [lein-figwheel "0.5.9"]
+            [lein-cljsbuild "1.1.5"]]
   :sass {:source-paths ["src/sass"]
          :source-map true
          :output-style :compressed}
@@ -31,7 +34,19 @@
                         :compiler {:main "frontend.main"
                                    :asset-path "js/out"
                                    :output-to "target/dev/resources/js/main.js"
-                                   :output-dir "target/dev/resources/js/out"}}]}
+                                   :output-dir "target/dev/resources/js/out"}}
+                       {:id "prod"
+                        :source-paths ["src/cljc" "src/cljs"]
+                        :compiler {:main "frontend.main"
+                                   :optimizations :advanced
+                                   :output-to "target/prod/resources/js/main.js"
+                                   :output-dir "target/prod/resources/js/out"}}]}
+  :auto-clean false
   :figwheel {:css-dirs ["target/dev/resources/css"]}
   :aliases {"develop" ["do" "clean"
-                      ["pdo" ["sass4clj" "auto"] ["figwheel"]]]})
+                       ["pdo" ["sass4clj" "auto"] ["figwheel"]]]
+            "prod" ["with-profile" "prod" "do"
+                    "clean"
+                    ["sass4clj" "once"]
+                    ["cljsbuild" "once" "prod"]
+                    "uberjar"]})
