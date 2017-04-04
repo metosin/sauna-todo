@@ -1,21 +1,49 @@
 (ns frontend.main
-  (:require [reagent.core :as reagent]
+  (:require [common.localization :refer [tr]]
+            [reagent.core :as reagent]
             [eines.client :as eines]))
 
-(def state (reagent/atom nil))
+(defonce state (reagent/atom nil))
 
-(defn hello-view
+(defn todo-item-view
+  [todo]
+  [:div.todo-list__item (:text todo)])
+
+(defn todo-list-view
   []
-  [:div
-   [:h1 "Hello from Reagent!"]
-   [:h2 "State: " (pr-str @state)]])
+  [:div.todo-list
+   (for [todo (:todos @state)]
+     ^{:key (:id todo)}
+     [todo-item-view todo])])
+
+(defn todo-input-view
+  []
+  [:input.todo-input
+   {:placeholder (tr :new-todo)
+    :auto-focus true
+    :value (:new-todo @state)
+    :on-change (fn [e]
+                 (let [new-todo (-> e .-target .-value)]
+                   (swap! state assoc :new-todo new-todo)))
+    :on-key-press (fn [e]
+                    (if (= (.-charCode e) 13)
+                      (js/console.log "Not Implemented Yet!")))}])
+
+(defn main-view
+  []
+  [:div.todo-container
+   [:h1.todo-title (tr :page-title)]
+   [:div.todo-content
+    [todo-input-view]
+    [todo-list-view]]
+   [:div.todo-footer (tr :we-love-clojure)]])
 
 (defn on-connect
   []
   (js/console.log "Connected to backend.")
   (eines/send! {:message-type :get-todos}
                (fn [response]
-                 (reset! state (:body response)))))
+                 (swap! state assoc :todos (:body response)))))
 
 (defn on-message
   [message]
@@ -35,7 +63,7 @@
                 :on-message on-message
                 :on-close on-close
                 :on-error on-error})
-  (reagent/render [hello-view]
+  (reagent/render [main-view]
                   (.getElementById js/document "app")))
 
 (main)
