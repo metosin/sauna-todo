@@ -1,4 +1,4 @@
-(ns sauna-todo.core
+(ns backend.main
   (:gen-class))
 
 (defn -main

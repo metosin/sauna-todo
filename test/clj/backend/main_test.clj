@@ -1,6 +1,6 @@
-(ns sauna-todo.core-test
+(ns backend.main-test
   (:require [clojure.test :refer :all]
-            [sauna-todo.core :refer :all]))
+            [backend.main :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
