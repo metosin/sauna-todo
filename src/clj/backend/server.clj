@@ -2,6 +2,7 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
             [common.localization :refer [tr]]
+            [backend.routes :as routes]
             [hiccup.core :as hiccup]
             [hiccup.page :as page]
             [integrant.core :as ig]
@@ -56,8 +57,7 @@
       (content-type/wrap-content-type)))
 
 (defmethod ig/init-key :handler/ring [_ _]
-  (some-fn (-> (eines/handler-context (fn [_]
-                                        {:body "Hello from backend!"})
+  (some-fn (-> (eines/handler-context routes/route-message
                                       {:middlewares [(rsvp/rsvp-middleware)]})
                (eines-immutant/create-handler))
            (create-static-handler)

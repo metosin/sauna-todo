@@ -2,21 +2,20 @@
   (:require [reagent.core :as reagent]
             [eines.client :as eines]))
 
+(def state (reagent/atom nil))
+
 (defn hello-view
   []
   [:div
    [:h1 "Hello from Reagent!"]
-   [:button
-    {:on-click (fn [_]
-                 (eines/send! {:message-type :test
-                               :body {:x 1}}
-                              (fn [response]
-                                (js/console.log "RESPONSE: " (pr-str response)))))}
-    "Yell to backend!"]])
+   [:h2 "State: " (pr-str @state)]])
 
 (defn on-connect
   []
-  (js/console.log "Connecting to backend."))
+  (js/console.log "Connected to backend.")
+  (eines/send! {:message-type :get-todos}
+               (fn [response]
+                 (reset! state (:body response)))))
 
 (defn on-message
   [message]
