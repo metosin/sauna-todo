@@ -3,11 +3,19 @@
             [reagent.core :as reagent]
             [eines.client :as eines]))
 
+;;
+;; State
+;;
+
 (defonce state (reagent/atom nil))
 
 (defn update-todos!
   [todos]
   (swap! state assoc :todos todos))
+
+;;
+;; Views
+;;
 
 (defn todo-item-view
   [todo]
@@ -43,6 +51,10 @@
     [todo-list-view]]
    [:div.todo-footer (tr :we-love-clojure)]])
 
+;;
+;; Websockets
+;;
+
 (defn on-connect
   []
   (js/console.log "Connected to backend.")
@@ -64,6 +76,10 @@
 (defn on-error
   []
   (js/console.warn "Disconnected from backend because of an error."))
+
+;;
+;; Main
+;;
 
 (defn ^:export main
   []
