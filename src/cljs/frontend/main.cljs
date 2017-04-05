@@ -38,9 +38,12 @@
                  (let [new-todo (-> e .-target .-value)]
                    (swap! state assoc :new-todo new-todo)))
     :on-key-press (fn [e]
-                    (if (= (.-charCode e) 13)
-                      (eines/send! {:message-type :new-todo
-                                    :body (:new-todo @state)})))}])
+                    (let [new-todo (:new-todo @state)]
+                      (if  (= (.-charCode e) 13)
+                        (eines/send! {:message-type :new-todo
+                                      :body new-todo}
+                                     (fn [_]
+                                       (swap! state dissoc :new-todo))))))}])
 
 (defn main-view
   []
