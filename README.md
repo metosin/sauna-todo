@@ -1,6 +1,6 @@
 # Sauna-todo
 
-Simple full-stack Clojure TODO app example for TiTe and Luuppi -sauna.
+Simple full-stack TODO app example for demonstrating Clojure(script)
 
 ## Development
 

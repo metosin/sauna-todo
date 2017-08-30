@@ -1,5 +1,5 @@
 (defproject sauna-todo "0.1.0-SNAPSHOT"
-  :description "Simple full-stack Clojure TODO app example for TiTe and Luuppi -sauna"
+  :description "Simple full-stack TODO app example for demonstrating Clojure(script)"
   :url "https://github.com/metosin/sauna-todo"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
