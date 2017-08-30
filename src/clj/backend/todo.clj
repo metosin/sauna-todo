@@ -1,9 +1,13 @@
 (ns backend.todo
   (:require [backend.broadcast :as broadcast]))
 
-(defonce todos (atom [{:id 1
+(defn create-uuid!
+  []
+  (str (java.util.UUID/randomUUID)))
+
+(defonce todos (atom [{:id (create-uuid!)
                        :text "Eat and drink"}
-                      {:id 2
+                      {:id (create-uuid!)
                        :text "Go to sauna!"}]))
 
 (defn get-todos
@@ -11,12 +15,11 @@
   {:message-type :todos
    :body @todos})
 
+
 (defn add-todo!
   [message]
-  (let [existing-ids (map :id @todos)
-        new-id (inc (apply max 0 (conj existing-ids)))
-        {:keys [send! send-fn]} message]
-    (swap! todos conj {:id new-id
+  (let [{:keys [send! send-fn]} message]
+    (swap! todos conj {:id (create-uuid!)
                        :text (:body message)})
     (broadcast/broadcast! {:message-type :todos
                            :body @todos})))
