@@ -5,6 +5,7 @@
              :new-todo todo/add-todo!})
 
 (defn route-message
-  [message]
-  (let [f (get routes (:message-type message))]
-    (f message)))
+  [{:keys [message-type] :as message}]
+  (if-let [f (get routes message-type)]
+    (f message)
+    (throw (ex-info (str "No route found for " message-type) {}))))
