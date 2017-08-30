@@ -3,13 +3,13 @@
   :url "https://github.com/metosin/sauna-todo"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.494"]
-                 [integrant "0.3.3"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha19"]
+                 [org.clojure/clojurescript "1.9.908"]
+                 [integrant "0.6.1"]
                  [integrant/repl "0.2.0"]
-                 [org.immutant/web "2.1.6"]
-                 [hiccup "1.0.5"]
-                 [reagent "0.6.1"]
+                 [org.immutant/web "2.1.9"]
+                 [hiccup "2.0.0-alpha1"]
+                 [reagent "0.8.0-alpha1"]
                  [metosin/eines "0.0.7"]]
   :main ^:skip-aot backend.main
   :source-paths ["src/clj" "src/cljc"]
@@ -22,9 +22,9 @@
                     :sass {:target-path "target/prod/resources/css"}
                     :resource-paths ["target/prod/resources"]}}
   :plugins [[lein-pdo "0.1.1"]
-            [deraen/lein-sass4clj "0.3.0"]
-            [lein-figwheel "0.5.9"]
-            [lein-cljsbuild "1.1.5"]]
+            [deraen/lein-sass4clj "0.3.1"]
+            [lein-figwheel "0.5.13"]
+            [lein-cljsbuild "1.1.7"]]
   :sass {:source-paths ["src/sass"]
          :source-map true
          :output-style :compressed}
