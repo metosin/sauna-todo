@@ -19,7 +19,8 @@
 
 (defn todo-item-view
   [todo]
-  [:div.todo-list__item (:text todo)])
+  [:div.todo-list-item
+   [:span.todo-list-item__span (:text todo)]])
 
 (defn todo-list-view
   []

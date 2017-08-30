@@ -51,10 +51,15 @@ body {
     box-shadow: 0px 0px 10px #c5c5c5;
 }
 
-.todo-list__item {
-    padding: 15px 0 15px 12px;
+.todo-list-item {
+    display: flex;
+    padding: 15px 15px 15px 12px;
     font-size: 28px;
     border-bottom: 1px solid #d0d0d0;
+}
+
+.todo-list-item__span {
+    flex: 1 0 auto;
 }
 
 .todo-footer {
