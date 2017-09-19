@@ -5,6 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha19"]
                  [org.clojure/clojurescript "1.9.908"]
+                 [binaryage/devtools "0.9.3"]
                  [integrant "0.6.1"]
                  [integrant/repl "0.2.0"]
                  [org.immutant/web "2.1.9"]
@@ -33,6 +34,8 @@
                         :figwheel true
                         :compiler {:main "frontend.main"
                                    :asset-path "js/out"
+                                   :external-config {:devtools/config {:features-to-install :all}}
+                                   :preloads [devtools.preload]
                                    :output-to "target/dev/resources/js/main.js"
                                    :output-dir "target/dev/resources/js/out"}}
                        {:id "prod"
