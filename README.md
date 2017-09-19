@@ -13,6 +13,8 @@ lein dev
 Then open your IDE / editor and start a new REPL from there. Use ```(reset)```
 to start the server and reset it when you make changes to the backend.
 
+The frontend is running at http://localhost:3000.
+
 The frontend will update automatically when files are saved.
 
 ## Deployment
