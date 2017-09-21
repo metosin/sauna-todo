@@ -9,28 +9,24 @@
 
 (defonce state (reagent/atom nil))
 
-(defn update-todos!
-  [todos]
+(defn update-todos! [todos]
   (swap! state assoc :todos todos))
 
 ;;
 ;; Views
 ;;
 
-(defn todo-item-view
-  [todo]
+(defn todo-item-view [todo]
   [:div.todo-list-item
    [:span.todo-list-item__span (:text todo)]])
 
-(defn todo-list-view
-  []
+(defn todo-list-view []
   [:div.todo-list
    (for [todo (:todos @state)]
      ^{:key (:id todo)}
      [todo-item-view todo])])
 
-(defn todo-input-view
-  []
+(defn todo-input-view []
   [:input.todo-input
    {:placeholder (tr :new-todo)
     :auto-focus true
@@ -40,14 +36,13 @@
                    (swap! state assoc :new-todo new-todo)))
     :on-key-press (fn [e]
                     (let [new-todo (:new-todo @state)]
-                      (if  (= (.-charCode e) 13)
+                      (if (= (.-charCode e) 13)
                         (eines/send! {:message-type :new-todo
                                       :body new-todo}
                                      (fn [_]
                                        (swap! state dissoc :new-todo))))))}])
 
-(defn main-view
-  []
+(defn main-view []
   [:div.todo-container
    [:h1.todo-title (tr :page-title)]
    [:div.todo-content
@@ -59,39 +54,33 @@
 ;; Websockets
 ;;
 
-(defn on-connect
-  []
+(defn on-connect []
   (js/console.log "Connected to backend.")
   (eines/send! {:message-type :get-todos}
                (fn [response]
                  (update-todos! (:body response)))))
 
-(defn on-message
-  [message]
+(defn on-message [message]
   (if (= (:message-type message) :todos)
     (update-todos! (:body message))
     (js/console.warn "Got unrecognized message from backend: "
                      (pr-str message))))
 
-(defn on-close
-  []
+(defn on-close []
   (js/console.log "Disconnected from backend."))
 
-(defn on-error
-  []
+(defn on-error []
   (js/console.warn "Disconnected from backend because of an error."))
 
 ;;
 ;; Main
 ;;
 
-(defn ^:export main
-  []
+(defn ^:export main []
   (eines/init! {:on-connect on-connect
                 :on-message on-message
                 :on-close on-close
                 :on-error on-error})
-  (reagent/render [main-view]
-                  (.getElementById js/document "app")))
+  (reagent/render [main-view] (.getElementById js/document "app")))
 
 (main)

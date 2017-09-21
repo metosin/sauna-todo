@@ -3,5 +3,5 @@
             [integrant.repl :refer [clear go halt init reset reset-all]]
             [backend.server]))
 
-(integrant.repl/set-prep! (fn []
-                            (ig/read-string (slurp "resources/config.edn"))))
+(integrant.repl/set-prep!
+  (fn [_] (ig/read-string (slurp "resources/config.edn"))))

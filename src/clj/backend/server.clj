@@ -25,8 +25,7 @@
 ;; Index page
 ;;
 
-(defn index
-  []
+(defn index []
   (hiccup/html
    (page/html5
     [:head
@@ -41,16 +40,14 @@
        [:h1 (tr :loading)]]]
      (page/include-js "/js/main.js")])))
 
-(defn create-index-handler
-  []
+(defn create-index-handler []
   (fn [req]
     (if (= (:request-method req) :get)
       (-> (index)
           response/response
           (response/content-type "text/html; charset=utf-8")))))
 
-(defn create-static-handler
-  []
+(defn create-static-handler []
   (-> (fn [req]
         (if (= (:request-method req) :get)
           (response/resource-response (:uri req))))

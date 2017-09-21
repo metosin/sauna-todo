@@ -6,7 +6,6 @@
    :new-todo "What do you need to do?"
    :we-love-clojure "We <3 Clojure"})
 
-(defn tr
-  [k]
+(defn tr [k]
   (or (get defaults k)
       (str "Not yet localized: << " k " >>")))
