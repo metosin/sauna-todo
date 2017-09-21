@@ -4,4 +4,4 @@
             [backend.server]))
 
 (integrant.repl/set-prep!
-  #(ig/read-string (slurp "resources/config.edn")))
+  (fn [_] (ig/read-string (slurp "resources/config.edn"))))

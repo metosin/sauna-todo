@@ -81,7 +81,6 @@
                 :on-message on-message
                 :on-close on-close
                 :on-error on-error})
-  (reagent/render [main-view]
-                  (.getElementById js/document "app")))
+  (reagent/render [main-view] (.getElementById js/document "app")))
 
 (main)
