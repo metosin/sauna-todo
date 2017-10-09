@@ -19,9 +19,10 @@
   :repl-options {:init-ns user}
   :profiles {:dev {:resource-paths ["target/dev/resources"]
                    :sass {:target-path "target/dev/resources/css"}}
-             :prod {:aot [backend.main]
-                    :sass {:target-path "target/prod/resources/css"}
-                    :resource-paths ["target/prod/resources"]}}
+             :prod {:sass {:target-path "target/prod/resources/css"}
+                    :resource-paths ["target/prod/resources"]}
+             :uberjar {:uberjar-name "app.jar"
+                       :aot [backend.main]}}
   :plugins [[lein-pdo "0.1.1"]
             [deraen/lein-sass4clj "0.3.1"]
             [lein-figwheel "0.5.13"]
