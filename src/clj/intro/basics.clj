@@ -71,8 +71,7 @@ nil
 
 ;; Your own functions. How to calculate average of two numbers?
 
-(defn my-avg
-  [x y]
+(defn my-avg [x y]
   (/ (+ x y) 2))
 
 (my-avg 2 4)
@@ -89,8 +88,7 @@ nil
 ;; Function for checking is String is blank?
 ;; Compare this to Apache Commons StringUtils (Java)
 
-(defn blank?
-  [s]
+(defn blank? [s]
   (every? (fn [c] (Character/isWhitespace c)) s))
 
 (blank? nil)
