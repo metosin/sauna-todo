@@ -66,3 +66,18 @@ body {
   font-size: 16px;
   color: #b0b0b0;
 }
+
+// Styles for todo remove button. Implementing it is an exercice :)
+
+.todo-list-item__remove-button {
+    padding: 5px 10px;
+    border: none;
+    background-color: #cc3333;
+    color: white;
+    outline: none;
+    cursor: pointer;
+}
+
+.todo-list-item__remove-button:hover {
+    background-color: darken(#cc3333, 5%);
+}
