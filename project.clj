@@ -4,13 +4,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha19"]
-                 [org.clojure/clojurescript "1.9.908"]
-                 [binaryage/devtools "0.9.3"]
+                 [org.clojure/clojurescript "1.9.946"]
+                 [binaryage/devtools "0.9.7"]
                  [integrant "0.6.1"]
                  [integrant/repl "0.2.0"]
                  [org.immutant/web "2.1.9"]
                  [hiccup "2.0.0-alpha1"]
-                 [reagent "0.8.0-alpha1"]
+                 [reagent "0.8.0-alpha2"]
                  [metosin/eines "0.0.7"]
                  [metosin/reagent-dev-tools "0.1.0"]]
   :main ^:skip-aot backend.main
@@ -27,10 +27,12 @@
   :plugins [[lein-pdo "0.1.1"]
             [deraen/lein-sass4clj "0.3.1"]
             [lein-figwheel "0.5.13"]
-            [lein-cljsbuild "1.1.7"]]
+            [lein-cljsbuild "1.1.7"]
+            [metosin/boot-alt-test "0.4.0-SNAPSHOT"]]
   :sass {:source-paths ["src/sass"]
          :source-map true
          :output-style :compressed}
+  :alt-test {:report :pretty}
   :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src/cljc" "src/cljs"]
                         :figwheel true
