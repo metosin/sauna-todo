@@ -10,7 +10,7 @@
                  [integrant/repl "0.2.0"]
                  [org.immutant/web "2.1.9"]
                  [hiccup "2.0.0-alpha1"]
-                 [reagent "0.8.0-alpha1"]
+                 [reagent "0.8.0-alpha2"]
                  [metosin/eines "0.0.7"]
                  [metosin/reagent-dev-tools "0.1.0"]]
   :main ^:skip-aot backend.main
