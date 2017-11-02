@@ -13,7 +13,6 @@
   {:message-type :todos
    :body @todos})
 
-
 (defn add-todo! [message]
   (let [{:keys [send! send-fn]} message]
     (swap! todos conj {:id (create-uuid!)
