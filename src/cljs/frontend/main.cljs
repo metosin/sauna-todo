@@ -65,8 +65,8 @@
                  (update-todos! (:body response)))))
 
 (defn on-message [message]
-  (if (= (:message-type message) :todos)
-    (update-todos! (:body message))
+  (condp = (:message-type message)
+    :todos (update-todos! (:body message))
     (js/console.warn "Got unrecognized message from backend: "
                      (pr-str message))))
 
