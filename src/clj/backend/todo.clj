@@ -19,3 +19,11 @@
                        :text (:body message)})
     (broadcast/broadcast! {:message-type :todos
                            :body @todos})))
+
+(comment
+
+  (reset! todos nil)
+
+  (broadcast/broadcast!
+    {:message-type :todos
+     :body @todos}))
