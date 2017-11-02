@@ -1,13 +1,17 @@
 (ns frontend.main
   (:require [common.localization :refer [tr]]
             [reagent.core :as reagent]
-            [eines.client :as eines]))
+            [eines.client :as eines]
+            [reagent-dev-tools.state-tree :as dev-state]
+            [reagent-dev-tools.core :as dev-tools]))
 
 ;;
 ;; State
 ;;
 
 (defonce state (reagent/atom nil))
+
+(dev-state/register-state-atom "App state" state)
 
 (defn update-todos! [todos]
   (swap! state assoc :todos todos))
@@ -81,6 +85,8 @@
                 :on-message on-message
                 :on-close on-close
                 :on-error on-error})
-  (reagent/render [main-view] (.getElementById js/document "app")))
+  (reagent/render [main-view] (.getElementById js/document "app"))
+  (if-let [dev-el (.getElementById js/document "dev")]
+    (reagent/render [dev-tools/dev-tool {}] dev-el)))
 
 (main)

@@ -38,6 +38,7 @@
      [:div#app
       [:div.loading
        [:h1 (tr :loading)]]]
+     [:div#dev]
      (page/include-js "/js/main.js")])))
 
 (defn create-index-handler []
