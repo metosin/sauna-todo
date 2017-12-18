@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "sauna-todo",
+  "version": "1.0.0",
+  "description": "Simple full-stack TODO app example for demonstrating Clojure(script)",
+  "devDependencies": {
+    "karma": "^1.7.1",
+    "karma-cljs-test": "^0.1.0",
+    "karma-chrome-launcher": "^2.2.0"
+  }
+}

@@ -15,7 +15,7 @@
                  [metosin/reagent-dev-tools "0.1.0"]]
   :main ^:skip-aot backend.main
   :source-paths ["src/clj" "src/cljc"]
-  :test-paths ["test/clj" "test/cljc"]
+  :test-paths ["test/clj" "test/cljc" "test/cljs"]
   :target-path "target/%s"
   :repl-options {:init-ns user}
   :profiles {:dev {:resource-paths ["target/dev/resources"]
@@ -28,6 +28,7 @@
             [deraen/lein-sass4clj "0.3.1"]
             [lein-figwheel "0.5.13"]
             [lein-cljsbuild "1.1.7"]
+            [lein-doo "0.1.8"]
             [metosin/boot-alt-test "0.4.0-SNAPSHOT"]]
   :sass {:source-paths ["src/sass"]
          :source-map true
@@ -42,12 +43,20 @@
                                    :preloads [devtools.preload]
                                    :output-to "target/dev/resources/js/main.js"
                                    :output-dir "target/dev/resources/js/out"}}
+                       {:id "test"
+                        :source-paths ["src/cljc" "src/cljs" "test/cljs"]
+                        :compiler {:main "frontend.runner"
+                                   :asset-path "js/out"
+                                   :output-to "target/test/resources/js/main.js"
+                                   :output-dir "target/test/resources/js/out"}}
                        {:id "prod"
                         :source-paths ["src/cljc" "src/cljs"]
                         :compiler {:main "frontend.main"
                                    :optimizations :advanced
                                    :output-to "target/prod/resources/js/main.js"
                                    :output-dir "target/prod/resources/js/out"}}]}
+  :doo {:build "test"
+        :alias {:default [:chrome-headless]}}
   :auto-clean false
   :figwheel {:css-dirs ["target/dev/resources/css"]}
   :aliases {"dev" ["do" "clean"
