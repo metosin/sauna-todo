@@ -40,6 +40,13 @@
   (fn [db _]
     (:todos db)))
 
+(reg-sub ::todo-item-count
+  (fn [_]
+    (subscribe [::todos]))
+  (fn [todos _]
+    (js/console.log "lasketaan count")
+    (count todos)))
+
 (reg-sub ::new-todo
   (fn [db _]
     (:new-todo db)))
@@ -67,7 +74,8 @@
   [:div.todo-list
    (for [todo @(subscribe [::todos])]
      ^{:key (:id todo)}
-     [todo-item-view todo])])
+     [todo-item-view todo])
+   [:p @(subscribe [::todo-item-count]) " kappaletta todo item"]])
 
 (defn todo-input-view []
   [:input.todo-input
