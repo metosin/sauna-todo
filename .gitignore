@@ -10,3 +10,4 @@ pom.xml.asc
 .hgignore
 .hg/
 figwheel_server.log
+node_modules/

@@ -17,6 +17,13 @@ The frontend is running at http://localhost:3000.
 
 The frontend will update automatically when files are saved.
 
+## Tests
+
+```bash
+lein alt-test once
+lein alt-test auto
+```
+
 ## Deployment
 
 Open terminal, go to the working directory and run:
