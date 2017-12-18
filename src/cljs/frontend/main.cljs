@@ -1,6 +1,8 @@
 (ns frontend.main
   (:require [common.localization :refer [tr]]
             [reagent.core :as reagent]
+            [re-frame.core :as re-frame :refer [dispatch subscribe reg-event-fx reg-event-db reg-sub]]
+            [re-frame.db :as re-frame-db]
             [eines.client :as eines]
             [reagent-dev-tools.state-tree :as dev-state]
             [reagent-dev-tools.core :as dev-tools]))
@@ -9,12 +11,49 @@
 ;; State
 ;;
 
-(defonce state (reagent/atom nil))
+(dev-state/register-state-atom "App state" re-frame-db/app-db)
 
-(dev-state/register-state-atom "App state" state)
+(defn on-message [message]
+  (let [{:keys [message-type body]} (:body message)]
+    (dispatch [message-type body])))
 
-(defn update-todos! [todos]
-  (swap! state assoc :todos todos))
+(re-frame/reg-fx :eines/send
+  (fn [message]
+    (if message
+      (eines/send! (dissoc message :on-success)
+                   (fn [response]
+                     (if (:on-success message)
+                       (dispatch (conj (:on-success message) (:body (:body response))))
+                       (on-message response)))))))
+
+(reg-event-fx ::on-connect
+  (fn [{:keys [db]} _]
+    (js/console.log "Connected to backend.")
+    {:eines/send {:message-type :get-todos
+                  :on-success [:todos]}}))
+
+(reg-event-db :todos
+  (fn [app-db [_ new-todos]]
+    (assoc app-db :todos new-todos)))
+
+(reg-sub ::todos
+  (fn [db _]
+    (:todos db)))
+
+(reg-sub ::new-todo
+  (fn [db _]
+    (:new-todo db)))
+
+(reg-event-db ::update-new-todo
+  (fn [db [_ new-value]]
+    (assoc db :new-todo new-value)))
+
+(reg-event-fx ::new-todo
+  (fn [{:keys [db]}]
+    (let [new-todo (:new-todo db)]
+      {:eines/send {:message-type :new-todo
+                    :body new-todo
+                    :on-success [::update-new-todo nil]}})))
 
 ;;
 ;; Views
@@ -26,25 +65,21 @@
 
 (defn todo-list-view []
   [:div.todo-list
-   (for [todo (:todos @state)]
+   (for [todo @(subscribe [::todos])]
      ^{:key (:id todo)}
      [todo-item-view todo])])
 
 (defn todo-input-view []
   [:input.todo-input
-   {:placeholder (tr :new-todo)
-    :auto-focus true
-    :value (:new-todo @state)
-    :on-change (fn [e]
-                 (let [new-todo (-> e .-target .-value)]
-                   (swap! state assoc :new-todo new-todo)))
+   {:placeholder  (tr :new-todo)
+    :auto-focus   true
+    :value        @(subscribe [::new-todo])
+    :on-change    (fn [e]
+                    (dispatch [::update-new-todo (.. e -target -value)]))
     :on-key-press (fn [e]
-                    (let [new-todo (:new-todo @state)]
-                      (if (= (.-charCode e) 13)
-                        (eines/send! {:message-type :new-todo
-                                      :body new-todo}
-                                     (fn [_]
-                                       (swap! state dissoc :new-todo))))))}])
+                    (case (.-charCode e)
+                      13 (dispatch [::new-todo])
+                      nil))}])
 
 (defn main-view []
   [:div.todo-container
@@ -58,18 +93,6 @@
 ;; Websockets
 ;;
 
-(defn on-connect []
-  (js/console.log "Connected to backend.")
-  (eines/send! {:message-type :get-todos}
-               (fn [response]
-                 (update-todos! (:body response)))))
-
-(defn on-message [message]
-  (if (= (:message-type message) :todos)
-    (update-todos! (:body message))
-    (js/console.warn "Got unrecognized message from backend: "
-                     (pr-str message))))
-
 (defn on-close []
   (js/console.log "Disconnected from backend."))
 
@@ -81,7 +104,7 @@
 ;;
 
 (defn ^:export main []
-  (eines/init! {:on-connect on-connect
+  (eines/init! {:on-connect #(dispatch [::on-connect])
                 :on-message on-message
                 :on-close on-close
                 :on-error on-error})

@@ -12,14 +12,14 @@
                  [hiccup "2.0.0-alpha1"]
                  [reagent "0.8.0-alpha2"]
                  [metosin/eines "0.0.7"]
-                 [metosin/reagent-dev-tools "0.1.0"]]
+                 [metosin/reagent-dev-tools "0.1.0"]
+                 [re-frame "0.10.2"]]
   :main ^:skip-aot backend.main
   :source-paths ["src/clj" "src/cljc"]
   :test-paths ["test/clj" "test/cljc"]
   :target-path "target/%s"
   :repl-options {:init-ns user}
-  :profiles {:dev {:resource-paths ["target/dev/resources"]
-                   :sass {:target-path "target/dev/resources/css"}}
+  :profiles {:dev {:sass {:target-path "target/dev/resources/css"}}
              :prod {:sass {:target-path "target/prod/resources/css"}
                     :resource-paths ["target/prod/resources"]}
              :uberjar {:uberjar-name "app.jar"

@@ -1,7 +1,7 @@
 (ns common.localization)
 
 (def defaults
-  {:page-title "Sauna-TODO"
+  {:page-title "Bootcamp-TODO"
    :loading "We are loading stuff, please wait."
    :new-todo "What do you need to do?"
    :we-love-clojure "We <3 Clojure"})

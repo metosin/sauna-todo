@@ -49,9 +49,15 @@
           (response/content-type "text/html; charset=utf-8")))))
 
 (defn create-static-handler []
-  (-> (fn [req]
-        (if (= (:request-method req) :get)
-          (response/resource-response (:uri req))))
+  ;; Serve files from filesystem during development
+  ;; and from classpath in uberjar
+  (-> (if (.exists (io/file "target/dev/resources/"))
+        (fn [req]
+          (if (= (:request-method req) :get)
+            (response/file-response (:uri req) {:root "target/dev/resources/"})))
+        (fn [req]
+          (if (= (:request-method req) :get)
+            (response/resource-response (:uri req)))))
       (content-type/wrap-content-type)))
 
 (defmethod ig/init-key :handler/ring [_ _]

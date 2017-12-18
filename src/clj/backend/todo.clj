@@ -10,12 +10,12 @@
                        :text "Go to sauna!"}]))
 
 (defn get-todos [_]
-  {:message-type :todos
-   :body @todos})
+  {:body {:message-type :todos
+          :body @todos}})
 
 (defn add-todo! [message]
   (let [{:keys [send! send-fn]} message]
     (swap! todos conj {:id (create-uuid!)
                        :text (:body message)})
-    (broadcast/broadcast! {:message-type :todos
-                           :body @todos})))
+    (broadcast/broadcast! {:body {:message-type :todos
+                                  :body @todos}})))
