@@ -5,7 +5,12 @@
             [re-frame.db :as re-frame-db]
             [eines.client :as eines]
             [reagent-dev-tools.state-tree :as dev-state]
-            [reagent-dev-tools.core :as dev-tools]))
+            [reagent-dev-tools.core :as dev-tools]
+            [schema.core :as s]
+            [reitit.core :as reitit]
+            [reitit.coercion :as coercion]
+            [reitit.coercion.schema :as schema-coercion]
+            [reitit.re-frame :as reitit-re-frame]))
 
 ;;
 ;; State
@@ -30,7 +35,9 @@
   (fn [{:keys [db]} _]
     (js/console.log "Connected to backend.")
     {:eines/send {:message-type :get-todos
-                  :on-success [:todos]}}))
+                  :on-success [:todos]}
+     ;; This would usually be called after login is done
+     :dispatch [:routes/apply-controllers]}))
 
 (reg-event-db :todos
   (fn [app-db [_ new-todos]]
@@ -89,12 +96,77 @@
                       13 (dispatch [::new-todo])
                       nil))}])
 
+(defn todo-view [_]
+  [:div.todo-content
+    [todo-input-view]
+    [todo-list-view]])
+
+(def root-controller
+  {:params (constantly nil)
+   :start (fn [_]
+            (js/console.log "Init app"))})
+
+(def routes
+  (reitit/router
+    [["" {:name :frontpage
+          :controllers [{:params (constantly nil)
+                         :view todo-view}]}]
+
+     ["/a" {:controllers [{:params (constantly nil)
+                           :start (fn [_] (js/console.log "parent controller"))}]}
+      ["/b" {:name :b-view
+             :controllers [{:params (constantly nil)
+                            :view (fn [_] [:h1 "B view"])
+                            :start (fn [_] (js/console.log "b controller"))}]}]
+      ["/c" {:name :c-view
+             :controllers [{:params (constantly nil)
+                            :view (fn [_] [:h1 "C view"])
+                            :start (fn [_] (js/console.log "c controller"))}]}]
+      ["/d" {:controllers [{:params (fn [{:keys [params]}]
+                                      ;; This controller is responsible for both sub-views, which
+                                      ;; don't have their own controllers.
+                                      ;; re-init controller if :id has changed.
+                                      (select-keys params [:id]))
+                            :view (fn [params] [:h1 "D view, id " (:id params)])
+                            :start (fn [params] (js/console.log "d controller" params))}]}
+       ["" {:name :d-view}]
+       ["/:id" {:name :d-view-id
+                :parameters {:path {:id s/Int}}}]]]
+
+     ["/another" {:controllers [{:params (constantly nil)
+                                 :view (fn [_]
+                                         [:h1 "Another view"])
+                                 :start (fn [_] (js/console.log "another controller"))}]}
+      ["" {:name :another-main}]
+      ["/:name" {:name :another-with-params
+                 :parameters {:path {:name s/Str}}
+                 :controllers [{:params (fn [{:keys [params]}]
+                                          (select-keys params [:name]))
+                                :view (fn [params] [:h1 "Name: " (:name params)])
+                                :start (fn [params] (js/console.log "another controller" params))}]}]]]
+    {:compile coercion/compile-request-coercers
+     :data {:controllers [root-controller]
+            :coercion schema-coercion/coercion}}))
+
 (defn main-view []
   [:div.todo-container
    [:h1.todo-title (tr :page-title)]
-   [:div.todo-content
-    [todo-input-view]
-    [todo-list-view]]
+   [:ul
+    [:li [:a {:href (reitit-re-frame/href :frontpage)} "Todo-app"]]
+    [:li "Parent"
+     [:ul
+      [:li [:a {:href (reitit-re-frame/href :b-view)} "B-view"]]
+      [:li [:a {:href (reitit-re-frame/href :c-view)} "C-view"]]
+      [:li [:a {:href (reitit-re-frame/href :d-view)} "D-view"]
+       [:ul
+        [:li [:a {:href (reitit-re-frame/href :d-view-id {:id 1})} "ID: 1"]]
+        [:li [:a {:href (reitit-re-frame/href :d-view-id {:id 2})} "ID: 2"]]]]]]
+    [:li [:a {:href (reitit-re-frame/href :another-main)} "Another main"]
+     [:ul
+      [:li [:a {:href (reitit-re-frame/href :another-with-params {:name "bar"})} "Name: bar"]]
+      [:li [:a {:href (reitit-re-frame/href :another-with-params {:name "foo"})} "Name: foo"]]]]
+    ]
+   [reitit-re-frame/routed-view]
    [:div.todo-footer (tr :we-love-clojure)]])
 
 ;;
@@ -116,6 +188,7 @@
                 :on-message on-message
                 :on-close on-close
                 :on-error on-error})
+  (dispatch [:routes/init routes])
   (reagent/render [main-view] (.getElementById js/document "app"))
   (if-let [dev-el (.getElementById js/document "dev")]
     (reagent/render [dev-tools/dev-tool {}] dev-el)))

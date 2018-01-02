@@ -12,6 +12,7 @@
                  [hiccup "2.0.0-alpha1"]
                  [reagent "0.8.0-alpha2"]
                  [metosin/eines "0.0.7"]
+                 [metosin/reitit "0.1.0-SNAPSHOT"]
                  [metosin/reagent-dev-tools "0.1.0"]
                  [re-frame "0.10.2"]]
   :main ^:skip-aot backend.main
