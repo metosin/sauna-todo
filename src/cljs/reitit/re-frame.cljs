@@ -45,9 +45,9 @@
 
 (re/reg-sub :routes/match-by-name
   :<- [:routes/routes]
-  (fn [routes [_ k]]
+  (fn [routes [_ k params]]
     (if routes
-      (reitit/match-by-name routes k))))
+      (reitit/match-by-name routes k params))))
 
 (defn routed-view
   [views]
@@ -65,14 +65,14 @@
 ;;
 
 (re/reg-sub :routes/href
-  :<- [:routes/routes]
-  (fn [routes [_ name params]]
+  (fn [[_ name params :as p]]
+    (re/subscribe [:routes/match-by-name name params]))
+  (fn [match [_ name params]]
     ;; FIXME: query string
     ;; if last is map? -> append query string
-    (if routes
-      (if-let [path (:path (reitit/match-by-name routes name params))]
-        (str "#" path)
-        (js/console.error "Can't create URL for route " (pr-str name) (pr-str params))))))
+    (if-let [path (:path match)]
+      (str "#" path)
+      (js/console.error "Can't create URL for route " (pr-str name) (pr-str params)))))
 
 (defn href
   ([name] (href name nil))

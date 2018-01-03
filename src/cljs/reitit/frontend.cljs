@@ -20,7 +20,7 @@
       (subs 1)
       (str/replace #"/$" "")))
 
-(defn pad-same-length [a b]
+(defn- pad-same-length [a b]
   (concat a (take (- (count b) (count a)) (repeat nil))))
 
 ;;
@@ -45,7 +45,7 @@
 
 (defn apply-controllers
   "Applies changes between current controllers and
-  those previously enabled. Resets all controllers is
+  those previously enabled. Resets controllers which
   parameters have changed."
   [state old-match new-match]
   (if (:enable-controllers? state)
@@ -74,6 +74,5 @@
                         {:data {:name :not-found}}) $
                 (assoc $ :query (query-params hash))
                 (assoc $ :parameters (coercion/coerce! $)))]
-
     {:match match
      :state (apply-controllers state old-match match)}))
