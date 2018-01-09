@@ -7,56 +7,66 @@
             goog.Uri
             [reitit.coercion :as coercion]))
 
-(re/reg-event-fx ::hash-change
-  (fn [{:keys [db]} _]
-    (let [{:keys [match state]} (reitit-frontend/hash-change (::routes db) (:view db) (reitit-frontend/get-hash))]
-      {:db (assoc db
-                  :view match
-                  ::routes state)})))
+(re/reg-event-db ::hash-change
+  (fn [db _]
+    (let [match (reitit-frontend/hash-change (:routes (::routes db)) (reitit-frontend/get-hash))]
+      (assoc db ::routes (assoc (::routes db)
+                                :match match
+                                :controllers (if (:enable-controllers? (::routes db))
+                                               (reitit-frontend/apply-controllers (:controllers (::routes db)) match)
+                                               (:controllers (::routes db))))))))
 
 ;; Enables controllers (when used the first time)
 ;; and applies the changes.
 (re/reg-event-db :routes/apply-controllers
   (fn [db _]
-    (let [state (assoc (reitit-frontend/apply-controllers (::routes db) nil (:view db))
-                       :enable-controllers? true)]
-      (assoc db ::routes state))))
+    (assoc db ::routes (assoc (::routes db)
+                              :controllers (reitit-frontend/apply-controllers (:controllers (::routes db)) (:match (::routes db)))
+                              :enable-controllers? true))))
 
 (re/reg-event-fx :routes/init
   (fn [{:keys [db]} [_ routes]]
     (set! js/window.onhashchange #(dispatch [::hash-change]))
     {:db (assoc db ::routes {:routes routes
+                             :match nil
                              :controllers []
                              :enable-controllers? false})
      :dispatch [::hash-change]}))
 
-(re/reg-sub :routes/current-view
+(re/reg-sub ::state
   (fn [db]
-    (:view db)))
+    (::routes db)))
+
+(re/reg-sub :routes/match
+  :<- [::state]
+  (fn [state]
+    (:match state)))
 
 (re/reg-sub :routes/data
-  :<- [:routes/current-view]
-  (fn [current-view _]
-    (:data current-view)))
+  :<- [:routes/match]
+  (fn [match _]
+    (:data match)))
 
 (re/reg-sub :routes/routes
-  (fn [db]
-    (:routes (::routes db))))
+  :<- [::state]
+  (fn [state]
+    (:routes state)))
 
 (re/reg-sub :routes/match-by-name
   :<- [:routes/routes]
   (fn [routes [_ k params]]
     (if routes
-      (reitit/match-by-name routes k params))))
+      (reitit/match-by-name routes k params)
+      ::not-initialized)))
 
 (defn routed-view
   [views]
-  (let [view @(re/subscribe [:routes/current-view])
+  (let [view @(re/subscribe [:routes/match])
         ;; Select downmost controller that has view component
         controller (first (filter :view (reverse (:controllers (:data view)))))]
     (if-let [f (:view controller)]
       ;; NOTE: View component is passed the complete params map, not just the controllers params
-      ;; :routes/current-view doesn't know about controller params
+      ;; :routes/match doesn't know about controller params
       [f (:params view)]
       [:div "No view component defined for route: " (:name (:data view))])))
 
@@ -72,7 +82,8 @@
     ;; if last is map? -> append query string
     (if-let [path (:path match)]
       (str "#" path)
-      (js/console.error "Can't create URL for route " (pr-str name) (pr-str params)))))
+      (if (not= ::not-initialized match)
+        (js/console.error "Can't create URL for route " (pr-str name) (pr-str params))))))
 
 (defn href
   ([name] (href name nil))
