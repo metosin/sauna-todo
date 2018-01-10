@@ -11,7 +11,7 @@
                  [org.immutant/web "2.1.9"]
                  [hiccup "2.0.0-alpha1"]
                  [reagent "0.8.0-alpha2"]
-                 [metosin/eines "0.0.7"]
+                 [metosin/eines "0.0.8-20180110.153518-3"]
                  [metosin/reagent-dev-tools "0.1.0"]]
   :main ^:skip-aot backend.main
   :source-paths ["src/clj" "src/cljc"]
